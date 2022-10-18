@@ -1,17 +1,18 @@
 import logo from './logo.svg';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import Gameboard from './gameboard/Gameboard';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>
           <img src={logo} className="App-logo" alt="logo" />
-          <span>pathfinding single page application</span>
-        </p>
+          <h1>&gt; pathfinding &lt;</h1>
       </header>
       <content>
-        TODO
+        <Gameboard/>
       </content>
     </div>
   );

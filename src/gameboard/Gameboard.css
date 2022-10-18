@@ -1,0 +1,10 @@
+div.gameboard{
+    margin: 1em auto;
+    padding-top:2em;
+    padding-bottom:1em;
+    position:relative;
+}
+
+div.gameboard div.left,div.gameboard div.right{
+    margin:auto;
+}
