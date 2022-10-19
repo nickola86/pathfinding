@@ -31,3 +31,9 @@
 .cell.wayout i{
     left:5px;
 }
+label.hidden{
+    display:none;
+}
+label.visible{
+    margin-left:0.5em;
+}

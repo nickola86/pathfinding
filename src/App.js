@@ -15,7 +15,6 @@ function App() {
       </header>
       <content>
         <Gameboard/>
-        <EventViewer/>
       </content>
     </div>
   );
