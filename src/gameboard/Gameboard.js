@@ -11,7 +11,7 @@ function Gameboard() {
         </div>
         <div class="col-sm center">
             <PlusMinus position="top" />
-            <Grid />
+            <Grid nRows={10} nCols={10}/>
             <PlusMinus position="bottom" />
         </div>
         <div class="col-sm-2 right">

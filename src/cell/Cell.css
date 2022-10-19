@@ -1,11 +1,33 @@
 .cell{
   display:inline-block;
+  position:relative;
   background-color: white;
   border:1px solid gray;
   border-radius:0;
-  height:2em;
-  width:2em;
+  height:30px;
+  width:30px;
 }
 .cell:hover{
     border:1px solid gray;
+}
+.cell.wall{
+    background-color: #333;
+}
+.cell.entrypoint{
+
+}
+.cell.wayout{
+
+}
+
+.cell i{
+    position:absolute;
+    font-size:28px;
+    top:0;
+}
+.cell.entrypoint i{
+    left:2px;
+}
+.cell.wayout i{
+    left:5px;
 }
