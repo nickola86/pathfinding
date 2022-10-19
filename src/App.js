@@ -3,16 +3,19 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Gameboard from './gameboard/Gameboard';
+import EventViewer from './eventviewer/EventViewer';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h1>&gt; pathfinding &lt;</h1>
+          <h1>pathfinding visualizer</h1>
+          <hr/>
       </header>
       <content>
         <Gameboard/>
+        <EventViewer/>
       </content>
     </div>
   );

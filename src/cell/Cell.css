@@ -1,0 +1,11 @@
+.cell{
+  display:inline-block;
+  background-color: white;
+  border:1px solid gray;
+  border-radius:0;
+  height:2em;
+  width:2em;
+}
+.cell:hover{
+    border:1px solid gray;
+}

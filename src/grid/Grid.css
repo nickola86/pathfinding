@@ -1,4 +1,5 @@
 div.grid{
-    border: 1px solid red;
     margin:1em;
+    overflow:hidden;
+    white-space:nowrap;
 }
