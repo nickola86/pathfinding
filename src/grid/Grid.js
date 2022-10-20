@@ -14,18 +14,109 @@ let rules=[
         maxNumber:1
     }
 ]
-
+const emptyCell = {
+    cellType : "empty",
+};
 
 class Grid extends Component{
 
     constructor(props){
         super(props);
-        let state = {
-            nRows: props.nRows,
-            nCols: props.nCols,
-            cells: buildMatrix(props.nRows,props.nCols)
-        };
-        this.state=state;
+        this.state = {
+             nRows: props.nRows,
+             nCols: props.nCols,
+             cells: buildMatrix(props.nRows,props.nCols),
+             resizeEvent: props.resizeEvent
+         };
+    }
+
+    static shouldComponentUpdate(){
+        return true;
+    }
+
+    static getDerivedStateFromProps(props,state){
+        if(props.nCols!==state.nCols || props.nRows!==state.nRows){
+            //Do something
+            console.log("Grid.getDerivedStateFromProps > props", props);
+            console.log("Grid.getDerivedStateFromProps > state", state);
+
+            if(props.resizeEvent.side==='left' && props.resizeEvent.amount===-1){
+                state.cells.map(row=>{
+                    row.shift()
+                    row.map(col=>{
+                        col.coord.y--;
+                        return col;
+                    })
+                    return row;
+                })
+            }
+            if(props.resizeEvent.side==='top' && props.resizeEvent.amount===-1){
+                state.cells.shift();
+                state.cells.map(row=>{
+                    row.map(col=>{
+                        col.coord.x--;
+                        return col;
+                    })
+                    return row;
+                })
+            }
+            if(props.resizeEvent.side==='right' && props.resizeEvent.amount===-1){
+                state.cells.map(row=>{
+                    row.pop()
+                    return row;
+                })
+            }
+            if(props.resizeEvent.side==='bottom' && props.resizeEvent.amount===-1){
+                state.cells.pop()
+            }
+
+            let i=0;
+            if(props.resizeEvent.side==='left' && props.resizeEvent.amount===1){
+                state.cells.map(row=>{
+                    row.map(col=>{
+                        col.coord.y++;
+                        return col;
+                    })
+                    row.unshift({...emptyCell, ...{"coord":{x:i,y:0}}})
+                    i++;
+                    return row;
+                })
+            }
+            let j=0;
+            if(props.resizeEvent.side==='top' && props.resizeEvent.amount===1){
+                state.cells.map(row=>{
+                    row.map(col=>{
+                        col.coord.x++;
+                        return col;
+                    })
+                    return row;
+                })
+                state.cells.unshift(Array(props.nCols).fill().map((col)=>{
+                    col={...emptyCell, ...{"coord":{x:0,y:j}}}
+                    j++;
+                    return col;
+                }));
+            }
+            i=0;
+            if(props.resizeEvent.side==='right' && props.resizeEvent.amount===1){
+                state.cells.map(row=>{
+                    row.push({...emptyCell, ...{"coord":{x:i,y:props.nCols-1}}})
+                    i++;
+                    return row;
+                })
+            }
+            j=0;
+            if(props.resizeEvent.side==='bottom' && props.resizeEvent.amount===1){
+                state.cells.push(Array(props.nCols).fill().map((col)=>{
+                     col={...emptyCell, ...{"coord":{x:props.nRows-1,y:j}}}
+                     j++;
+                     return col;
+                 }))
+            }
+            state.nRows = props.nRows;
+            state.nCols = props.nCols;
+        }
+        return state;
     }
 
     updateCellState = (cellState) => {
@@ -42,6 +133,7 @@ class Grid extends Component{
                 cells: currentCells
             });
         }
+        this.forceUpdate();
     }
 
     areRulesStillSatisfiedWithThisNew = (cell) => {
@@ -60,6 +152,7 @@ class Grid extends Component{
     }
 
     render(){
+        console.log("Grid.Render! state", this.state);
         const grid = <div className="grid">
             {
                 this.state.cells.map(row=>
@@ -77,10 +170,6 @@ class Grid extends Component{
 }
 
 function buildMatrix(nRows,nCols){
-    let emptyCell = {
-        cellType : "empty",
-
-    };
     let matrix = [];
     let i=0, j=0;
     matrix = Array(nRows).fill().map(()=>{

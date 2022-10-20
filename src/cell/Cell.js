@@ -20,8 +20,10 @@ const icons = {
 }
 
 class Cell extends Component{
+
     constructor(props,context) {
         super(props, context);
+        this._isMouseDown=false;
         this.state = {
           cellType:props.cellType || "empty",
           coord:{
@@ -30,6 +32,11 @@ class Cell extends Component{
           }
         };
     }
+
+    onClickHandler = () => {
+        this.toggleCellType();
+    }
+
     toggleCellType = () => {
         if(this.props.disabled) return;
         this.setState(prevState => ({...this.state, cellType: transitions[prevState.cellType] }),
@@ -39,7 +46,8 @@ class Cell extends Component{
 
     render(){
         return <span>
-            <Button variant="light" className={`cell ${this.state.cellType}`} onClick={this.toggleCellType}>
+            <Button variant="light" className={`cell ${this.state.cellType}`}
+                    onClick={this.onClickHandler}>
                 <i className={icons[this.state.cellType]}/>
             </Button>
             <label className={`${this.props.labels==='on' ? 'visible' : 'hidden'}`}>{labels[this.state.cellType]}</label>
