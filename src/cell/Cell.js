@@ -24,13 +24,32 @@ class Cell extends Component{
     constructor(props,context) {
         super(props, context);
         this._isMouseDown=false;
-        this.state = {
-          cellType:props.cellType || "empty",
-          coord:{
-            x:props.x,
-            y:props.y,
-          }
+        this.state={
+           cellType: props.cellType || "empty",
+           coord:{
+               x:props.x,
+               y:props.y,
+             }
         };
+    }
+
+    static getDerivedStateFromProps(props,state){
+        /*
+        FIXME!
+        console.log("getDerivedStateFromProps > state",state)
+        console.log("getDerivedStateFromProps > props",props)
+
+        if( props.cellType !== state.cellType){
+            state = {
+                cellType: props.cellType || "empty",
+                coord:{
+                    x:props.x,
+                    y:props.y,
+                  }
+            };
+        }
+        return state;
+        */
     }
 
     onClickHandler = () => {

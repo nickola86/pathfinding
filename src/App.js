@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Gameboard from './gameboard/Gameboard';
 
 function App() {
+  console.log("App rendering");
   return (
     <div className="App">
       <header className="App-header">

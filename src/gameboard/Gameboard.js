@@ -56,6 +56,7 @@ class Gameboard extends Component {
     }
 
     render(){
+        console.log("Render Gameboard");
       return (<div class="gameboard container">
           <div class="row">
             <div class="col-sm-1 left">

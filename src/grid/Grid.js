@@ -30,15 +30,8 @@ class Grid extends Component{
          };
     }
 
-    static shouldComponentUpdate(){
-        return true;
-    }
-
     static getDerivedStateFromProps(props,state){
         if(props.nCols!==state.nCols || props.nRows!==state.nRows){
-            //Do something
-            console.log("Grid.getDerivedStateFromProps > props", props);
-            console.log("Grid.getDerivedStateFromProps > state", state);
 
             if(props.resizeEvent.side==='left' && props.resizeEvent.amount===-1){
                 state.cells.map(row=>{
@@ -152,10 +145,11 @@ class Grid extends Component{
     }
 
     render(){
-        console.log("Grid.Render! state", this.state);
-        const grid = <div className="grid">
+        let cells = [...this.state.cells]
+        //console.log("Grid.Render! state > cells", cells);
+        let grid = <div className="grid">
             {
-                this.state.cells.map(row=>
+                cells.map(row=>
                     <span>
                         {row.map(col=>
                             <Cell x={col.coord.x} y={col.coord.y} cellType={col.cellType} onCellChange={this.updateCellState}/>
@@ -167,6 +161,7 @@ class Grid extends Component{
         </div>
         return grid;
     }
+
 }
 
 function buildMatrix(nRows,nCols){
