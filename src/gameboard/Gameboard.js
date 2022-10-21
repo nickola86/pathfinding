@@ -1,8 +1,12 @@
 import './Gameboard.css';
 import Grid from '../grid/Grid';
 import Cell from '../cell/Cell';
+
+import AStarService from '../AStarService';
+
 import PlusMinus from '../plus-minus/PlusMinus';
 import Button from 'react-bootstrap/Button';
+
 import React, { Component } from 'react';
 
 const MIN_ROWS = 4;
@@ -15,8 +19,8 @@ class Gameboard extends Component {
         this.state = {
             grid : {
                 size : {
-                    nRows:8,
-                    nCols:8
+                    nRows:4,
+                    nCols:4
                 },
                 resize : {
                     side : null,
@@ -44,28 +48,44 @@ class Gameboard extends Component {
 
         if(this.resizeEventIsValid(event,_grid)){
             //Aggiorno lo stato se resize valido!
-            console.log("onClickResizeHandler > this.state",this.state);
-            console.log("onClickResizeHandler > _grid",_grid);
             this.setState(prevState => {
                 return {
                     ...prevState, ...{grid:_grid}
                 }
             });
         }
-
     }
 
-    isGridReady = (isReady) => {
-        console.log("Gameboard > isGridReady ? ", isReady)
+    isGridReady = (isReady,cells) => {
         this.setState(prevState => {
             return {
-                ...prevState, isGameboardReady : isReady
+                ...prevState, isGameboardReady : isReady, "cells":cells
             }
+        }, ()=>{
+            this.setState(prevState=>{
+                return {...prevState, gridHidden:true};
+            },()=>{
+                this.setState(prevState=>{
+                    return {...prevState, gridHidden:false};
+                });
+            });
         });
     }
 
+    onClickStartHandler = () => {
+        console.log("this.state.cells",this.state.cells);
+        const grid = [...this.state.cells];
+        const entrypointCoords = this.getEntrypointCoords(grid);
+        AStarService.findShortestPath(entrypointCoords, grid);
+    }
+
+    getEntrypointCoords = (grid) => {
+        const list = [].concat(...grid);
+        const entrypoint = list.find(c=>{return c.cellType==='entrypoint'});
+        return [entrypoint.coord.x,entrypoint.coord.y];
+    }
+
     render(){
-        console.log("Render Gameboard");
       return (<div class="gameboard container">
           <div class="row">
             <div class="col-sm-1 left">
@@ -73,7 +93,9 @@ class Gameboard extends Component {
             </div>
             <div class="col-sm center">
                 <PlusMinus position="top" tooltip="Aggiungi(+) o rimuovi(-) una riga dall' alto" onClickPlusMinus={this.onClickResizeHandler}/>
-                <Grid nRows={this.state.grid.size.nRows} nCols={this.state.grid.size.nCols} resizeEvent={this.state.grid.resize} isGridReady={this.isGridReady}/>
+                {
+                    !this.state.gridHidden && <Grid nRows={this.state.grid.size.nRows} nCols={this.state.grid.size.nCols} resizeEvent={this.state.grid.resize} isGridReady={this.isGridReady} cells={this.state.cells}/>
+                }
                 <PlusMinus position="bottom" tooltip="Aggiungi(+) o rimuovi(-) una riga dal basso" onClickPlusMinus={this.onClickResizeHandler}/>
             </div>
             <div class="col-sm-1 right">
@@ -83,7 +105,7 @@ class Gameboard extends Component {
           <hr/>
           <div class="row">
             <div class="col">
-                <Button disabled={!this.state.isGameboardReady}>Trova il cammino minimo!</Button>
+                <Button disabled={!this.state.isGameboardReady} onClick={this.onClickStartHandler}>Trova il cammino minimo!</Button>
                 <p>
                     <em>Per abilitare questo bottone devi selezionare una cella di entrata e una di uscita dal labirinto</em>
                 </p>

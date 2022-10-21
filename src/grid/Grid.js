@@ -31,6 +31,11 @@ class Grid extends Component{
     }
 
     static getDerivedStateFromProps(props,state){
+
+        //console.log("Grid > getDerivedStateFromProps > props",props);
+
+        if(!!props.cells) state.cells = props.cells;
+
         if(props.nCols!==state.nCols || props.nRows!==state.nRows){
 
             if(props.resizeEvent.side==='left' && props.resizeEvent.amount===-1){
@@ -126,10 +131,10 @@ class Grid extends Component{
                 cells: currentCells
             });
         }
-        this.forceUpdate();
+
         //Se la griglia contiene una cella entryPoint e una cella wayOut informo la Gameboard che il gioco può iniziare
         let list = [].concat(...this.state.cells);
-        this.props.isGridReady(!!list.find(c=>{return c.cellType==='entrypoint'}) && !!list.find(c=>{return c.cellType==='wayout'}))
+        this.props.isGridReady(!!list.find(c=>{return c.cellType==='entrypoint'}) && !!list.find(c=>{return c.cellType==='wayout'}),[...this.state.cells])
     }
 
     areRulesStillSatisfiedWithThisNew = (cell) => {
@@ -148,11 +153,10 @@ class Grid extends Component{
     }
 
     render(){
-        let cells = [...this.state.cells]
-        //console.log("Grid.Render! state > cells", cells);
+        const cells = [...this.state.cells]
+        console.log("Grid.Render! state > cells", cells);
         let grid = <div className="grid">
-            {
-                cells.map(row=>
+            {   cells.map(row=>
                     <span>
                         {row.map(col=>
                             <Cell x={col.coord.x} y={col.coord.y} cellType={col.cellType} onCellChange={this.updateCellState}/>

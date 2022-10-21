@@ -29,13 +29,13 @@ class Cell extends Component{
            coord:{
                x:props.x,
                y:props.y,
-             }
+             },
+           backgroundColor:''
         };
     }
 
     static getDerivedStateFromProps(props,state){
         /*
-        FIXME!
         console.log("getDerivedStateFromProps > state",state)
         console.log("getDerivedStateFromProps > props",props)
 
@@ -65,7 +65,7 @@ class Cell extends Component{
 
     render(){
         return <span>
-            <Button variant="light" className={`cell ${this.state.cellType}`}
+            <Button variant="light" className={`cell ${this.state.cellType} ${this.state.backgroundColor}`}
                     onClick={this.onClickHandler}>
                 <i className={icons[this.state.cellType]}/>
             </Button>

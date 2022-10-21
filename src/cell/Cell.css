@@ -37,3 +37,10 @@ label.hidden{
 label.visible{
     margin-left:0.5em;
 }
+
+.cell.empty.blue{
+    background-color:#C0E0FF;
+}
+.cell.empty.yellow,.cell.entrypoint.yellow,.cell.wayout.yellow{
+    background-color:#FFFF80;
+}
