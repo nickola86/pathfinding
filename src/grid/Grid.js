@@ -127,6 +127,9 @@ class Grid extends Component{
             });
         }
         this.forceUpdate();
+        //Se la griglia contiene una cella entryPoint e una cella wayOut informo la Gameboard che il gioco può iniziare
+        let list = [].concat(...this.state.cells);
+        this.props.isGridReady(!!list.find(c=>{return c.cellType==='entrypoint'}) && !!list.find(c=>{return c.cellType==='wayout'}))
     }
 
     areRulesStillSatisfiedWithThisNew = (cell) => {

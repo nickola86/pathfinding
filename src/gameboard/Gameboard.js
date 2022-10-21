@@ -55,6 +55,15 @@ class Gameboard extends Component {
 
     }
 
+    isGridReady = (isReady) => {
+        console.log("Gameboard > isGridReady ? ", isReady)
+        this.setState(prevState => {
+            return {
+                ...prevState, isGameboardReady : isReady
+            }
+        });
+    }
+
     render(){
         console.log("Render Gameboard");
       return (<div class="gameboard container">
@@ -64,7 +73,7 @@ class Gameboard extends Component {
             </div>
             <div class="col-sm center">
                 <PlusMinus position="top" tooltip="Aggiungi(+) o rimuovi(-) una riga dall' alto" onClickPlusMinus={this.onClickResizeHandler}/>
-                <Grid nRows={this.state.grid.size.nRows} nCols={this.state.grid.size.nCols} resizeEvent={this.state.grid.resize}/>
+                <Grid nRows={this.state.grid.size.nRows} nCols={this.state.grid.size.nCols} resizeEvent={this.state.grid.resize} isGridReady={this.isGridReady}/>
                 <PlusMinus position="bottom" tooltip="Aggiungi(+) o rimuovi(-) una riga dal basso" onClickPlusMinus={this.onClickResizeHandler}/>
             </div>
             <div class="col-sm-1 right">
@@ -74,7 +83,7 @@ class Gameboard extends Component {
           <hr/>
           <div class="row">
             <div class="col">
-                <Button disabled="true">Trova il cammino minimo!</Button>
+                <Button disabled={!this.state.isGameboardReady}>Trova il cammino minimo!</Button>
                 <p>
                     <em>Per abilitare questo bottone devi selezionare una cella di entrata e una di uscita dal labirinto</em>
                 </p>
