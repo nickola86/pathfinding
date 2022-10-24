@@ -73,11 +73,24 @@ class Gameboard extends Component {
     }
 
     onClickStartHandler = () => {
+
         console.log("this.state.cells",this.state.cells);
         const grid = [...this.state.cells];
         const entrypointCoords = this.getEntrypointCoords(grid);
+
         const path = AStarService.findShortestPath(entrypointCoords, grid);
         console.log("Shortest path: ",path);
+
+        const shortestPathCoords = this.pathToCoordinates(entrypointCoords,path);
+        console.log("shortestPathCoords",shortestPathCoords);
+
+    }
+
+    pathToCoordinates = (entrypointCoords,path) => {
+        let coords=[entrypointCoords];
+        path.forEach(d=>{return d==='South' ? coords.unshift([coords[0][0]+1,coords[0][1]]) : d==='North' ? coords.unshift([coords[0][0]-1,coords[0][1]]) : d==='East' ? coords.unshift([coords[0][0],coords[0][1]+1]) : d==='West' ? coords.unshift([coords[0][0],coords[0][1]-1]) : null})
+        coords.reverse();
+        return coords;
     }
 
     getEntrypointCoords = (grid) => {
