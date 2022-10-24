@@ -76,7 +76,8 @@ class Gameboard extends Component {
         console.log("this.state.cells",this.state.cells);
         const grid = [...this.state.cells];
         const entrypointCoords = this.getEntrypointCoords(grid);
-        AStarService.findShortestPath(entrypointCoords, grid);
+        const path = AStarService.findShortestPath(entrypointCoords, grid);
+        console.log("Shortest path: ",path);
     }
 
     getEntrypointCoords = (grid) => {
