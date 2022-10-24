@@ -114,6 +114,13 @@ class Grid extends Component{
             state.nRows = props.nRows;
             state.nCols = props.nCols;
         }
+        props && props.visitedCells && props.visitedCells.forEach(c => {
+            state.cells[c[0]][c[1]].backgroundColor='blue';
+        })
+        props && props.shortestPath && props.shortestPath.forEach(c => {
+            state.cells[c[0]][c[1]].backgroundColor='yellow';
+        })
+
         return state;
     }
 
@@ -154,12 +161,11 @@ class Grid extends Component{
 
     render(){
         const cells = [...this.state.cells]
-        console.log("Grid.Render! state > cells", cells);
         let grid = <div className="grid">
             {   cells.map(row=>
                     <span>
                         {row.map(col=>
-                            <Cell x={col.coord.x} y={col.coord.y} cellType={col.cellType} onCellChange={this.updateCellState}/>
+                            <Cell x={col.coord.x} y={col.coord.y} cellType={col.cellType} onCellChange={this.updateCellState} backgroundColor={col.backgroundColor}/>
                         )}
                         <br/>
                     </span>

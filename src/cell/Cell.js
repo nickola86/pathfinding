@@ -35,6 +35,8 @@ class Cell extends Component{
     }
 
     static getDerivedStateFromProps(props,state){
+        state.backgroundColor = props.backgroundColor
+        return state;
         /*
         console.log("getDerivedStateFromProps > state",state)
         console.log("getDerivedStateFromProps > props",props)

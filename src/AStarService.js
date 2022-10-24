@@ -1,9 +1,7 @@
 const AStarService = {
     // Start location will be in the following format:
     // [distanceFromTop, distanceFromLeft]
-    findShortestPath: function(startCoordinates, grid){
-      console.log("AStarService.findShortestPath > startCoordinates", startCoordinates);
-      console.log("AStarService.findShortestPath > grid", grid);
+    findShortestPath: function(startCoordinates,stopCoordinates, grid){
 
       let distanceFromTop = startCoordinates[0];
       let distanceFromLeft = startCoordinates[1];
@@ -19,7 +17,6 @@ const AStarService = {
 
       // Initialize the queue with the start location already inside
       let queue = [location];
-
       // Loop through the grid searching for the goal
       while (queue.length > 0) {
         // Take the first location off the queue
@@ -29,7 +26,7 @@ const AStarService = {
         let newLocation = this.exploreInDirection(currentLocation, 'North', grid);
         if (newLocation.status === 'Goal') {
           return newLocation.path;
-        } else if (newLocation.status === 'Valid') {
+        } else if (newLocation.status === 'Valid' && true) {
           queue.push(newLocation);
         }
 
@@ -113,16 +110,16 @@ const AStarService = {
       };
       newLocation.status = this.locationStatus(newLocation, grid);
 
-
-      console.log("newLocation",newLocation);
-      console.log("Grid:",grid);
-
       // If this new location is valid, mark it as 'Visited'
       if (newLocation.status === 'Valid') {
         grid[newLocation.distanceFromTop][newLocation.distanceFromLeft].status = 'visited';
       }
 
       return newLocation;
+    },
+    heuristic:function(p0,p1){
+        //Manhattan
+        return Math.abs(p1[0]-p0[0])+Math.abs(p1[1]-p0[1]);
     }
 
 };
