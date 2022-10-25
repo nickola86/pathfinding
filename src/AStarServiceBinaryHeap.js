@@ -34,72 +34,84 @@ var AStarService = {
             }
         }
     },
-    search: function(grid, start, end, heuristic) {
+    search: function(graph, start, end, renderCallback, heuristic) {
+        let grid = graph.nodes;
         AStarService.init(grid);
         heuristic = heuristic || AStarService.manhattan;
 
         var openList   = [];
         openList.push(start);
 
-
 		var openHeap = new BinaryHeap(function(node){return node.f;});
 		openHeap.push(start);
 
-        while(openHeap.size() > 0) {
+		//a intervalli regolari, faccio pop dall'heap, se l'heap è vuoto termino
+		var intervalId = setInterval(()=>{
+		    if(openHeap.size() === 0){
+		        //Condizione di terminazione dell'interval per fine nodi da esplorare
+		        clearInterval(intervalId);
+                intervalId=null;
+		    }else{
+		        renderCallback([],[start.x,start.y],graph);
+		        // Grab the lowest f(x) to process next.  Heap keeps this sorted for us.
+                var currentNode = openHeap.pop();
 
-        	// Grab the lowest f(x) to process next.  Heap keeps this sorted for us.
-            var currentNode = openHeap.pop();
+                // End case -- result has been found, return the traced path
+                if(currentNode === end) {
+                    var curr = currentNode;
+                    var ret = [];
+                    while(curr.parent) {
+                        ret.push(curr);
+                        curr = curr.parent;
+                    }
+                    //Condizione di terminazione dell'interval per raggiunto obiettivo
+                    clearInterval(intervalId);
+                    intervalId=null;
+                    renderCallback(ret.reverse(),[start.x,start.y],graph);
+                    return;
+                }
 
-		    // End case -- result has been found, return the traced path
-		    if(currentNode === end) {
-			    var curr = currentNode;
-			    var ret = [];
-			    while(curr.parent) {
-				    ret.push(curr);
-				    curr = curr.parent;
-			    }
-			    return ret.reverse();
+                // Normal case -- move currentNode from open to closed, process each of its neighbors
+                currentNode.closed = true;
+
+                var neighbors = AStarService.neighbors(grid, currentNode);
+                for(var i=0; i<neighbors.length;i++) {
+                    var neighbor = neighbors[i];
+
+                    if(neighbor.closed || neighbor.isWall()) {
+                        // not a valid node to process, skip to next neighbor
+                        continue;
+                    }
+
+                    // g score is the shortest distance from start to current node, we need to check if
+                    //   the path we have arrived at this neighbor is the shortest one we have seen yet
+                    // 1 is the distance from a node to it's neighbor.  This could be variable for weighted paths.
+                    var gScore = currentNode.g + 1;
+                    var beenVisited = neighbor.visited;
+
+                    if(!beenVisited || gScore < neighbor.g) {
+
+                        // Found an optimal (so far) path to this node.  Take score for node to see how good it is.
+                        neighbor.visited = true;
+                        neighbor.parent = currentNode;
+                        neighbor.h = neighbor.h || heuristic(neighbor.pos, end.pos);
+                        neighbor.g = gScore;
+                        neighbor.f = neighbor.g + neighbor.h;
+                        neighbor.debug = "F: " + neighbor.f + "<br />G: " + neighbor.g + "<br />H: " + neighbor.h;
+
+                        if (!beenVisited) {
+                            // Pushing to heap will put it in proper place based on the 'f' value.
+                            openHeap.push(neighbor);
+                        }
+                        else {
+                            // Already seen the node, but since it has been rescored we need to reorder it in the heap
+                            openHeap.rescoreElement(neighbor);
+                        }
+                    }
+                }
+
 		    }
-
-		    // Normal case -- move currentNode from open to closed, process each of its neighbors
-		    currentNode.closed = true;
-
-		    var neighbors = AStarService.neighbors(grid, currentNode);
-		    for(var i=0; i<neighbors.length;i++) {
-			    var neighbor = neighbors[i];
-
-			    if(neighbor.closed || neighbor.isWall()) {
-				    // not a valid node to process, skip to next neighbor
-				    continue;
-			    }
-
-			    // g score is the shortest distance from start to current node, we need to check if
-			    //   the path we have arrived at this neighbor is the shortest one we have seen yet
-			    // 1 is the distance from a node to it's neighbor.  This could be variable for weighted paths.
-			    var gScore = currentNode.g + 1;
-			    var beenVisited = neighbor.visited;
-
-			    if(!beenVisited || gScore < neighbor.g) {
-
-				    // Found an optimal (so far) path to this node.  Take score for node to see how good it is.
-				    neighbor.visited = true;
-				    neighbor.parent = currentNode;
-				    neighbor.h = neighbor.h || heuristic(neighbor.pos, end.pos);
-				    neighbor.g = gScore;
-				    neighbor.f = neighbor.g + neighbor.h;
-				    neighbor.debug = "F: " + neighbor.f + "<br />G: " + neighbor.g + "<br />H: " + neighbor.h;
-
-				    if (!beenVisited) {
-				    	// Pushing to heap will put it in proper place based on the 'f' value.
-				    	openHeap.push(neighbor);
-				    }
-				    else {
-				    	// Already seen the node, but since it has been rescored we need to reorder it in the heap
-				    	openHeap.rescoreElement(neighbor);
-				    }
-				}
-		    }
-        }
+		},100);
 
         // No result was found -- empty array signifies failure to find path
         return [];

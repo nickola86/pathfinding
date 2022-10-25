@@ -81,40 +81,22 @@ class Gameboard extends Component {
         const grid = [...this.state.cells];
         const startCoords = this.getEntrypointCoords(grid);
         const endCoords = this.getWayoutCoords(grid);
-
         const graph = new Graph(grid.map(r=>{return [...r.map(c=>{return c.cellType==='wall' ? 1 : 0})]}));
-
         const  start = graph.nodes[startCoords[0]][startCoords[1]];
         const  end = graph.nodes[endCoords[0]][endCoords[1]];
 
-        console.log("graph",graph);
-        console.log("start",start);
-        console.log("end", end);
+        AStarService.search(graph,start,end,this.renderCallback);
 
-        console.log("AStarService.findShortestPath Start!", new Date());
+    }
 
-        //const path = AStarService.findShortestPath(entrypointCoords,wayoutCoords, grid);
-        const path = AStarService.search(graph.nodes,start,end);
-
-        console.log("AStarService.findShortestPath Stop!", new Date());
-
-        console.log("path",path);
-
+    renderCallback = (path,startCoords,graph) => {
+        console.log()
         let shortestPathCoords = [...path.map(p=>{return [p.x,p.y]}), startCoords];
-
         const list = [].concat(...graph.nodes);
         let visitedCells = list.filter(c=>{return c.visited}).map(c=>{return [c.x,c.y]});
-
-        console.log("grid",grid);
-
-        console.log("visitedCells",visitedCells);
-
-        console.log("shortestPathCoords",shortestPathCoords);
-
         this.setState(prevState => {
             return {...prevState,shortestPathCoords,visitedCells}
         });
-
     }
 
     getEntrypointCoords = (grid) => {
@@ -132,10 +114,10 @@ class Gameboard extends Component {
       return (<div class="gameboard container">
           <div class="row">
             <div class="col-sm-1 left">
-                {false && <PlusMinus position="left" tooltip="Aggiungi(+) o rimuovi(-) una colonna da sinistra" onClickPlusMinus={this.onClickResizeHandler}/>}
+                <PlusMinus position="left" tooltip="Aggiungi(+) o rimuovi(-) una colonna da sinistra" onClickPlusMinus={this.onClickResizeHandler}/>
             </div>
             <div class="col-sm center">
-                {false && <PlusMinus position="top" tooltip="Aggiungi(+) o rimuovi(-) una riga dall' alto" onClickPlusMinus={this.onClickResizeHandler}/>}
+                <PlusMinus position="top" tooltip="Aggiungi(+) o rimuovi(-) una riga dall' alto" onClickPlusMinus={this.onClickResizeHandler}/>
                 {
                     !this.state.gridHidden && <Grid nRows={this.state.grid.size.nRows} nCols={this.state.grid.size.nCols} resizeEvent={this.state.grid.resize} isGridReady={this.isGridReady}
                             cells={this.state.cells} shortestPath={this.state.shortestPathCoords} visitedCells={this.state.visitedCells}/>
