@@ -23,104 +23,35 @@ class Grid extends Component{
     constructor(props){
         super(props);
         this.state = {
-             nRows: props.nRows,
-             nCols: props.nCols,
-             cells: buildMatrix(props.nRows,props.nCols),
-             resizeEvent: props.resizeEvent
+             cells: props.cells || [],
+             nRows: props.cells ? props.cells.length : 0,
+             nCols: props.cells && props.cells[0] ? props.cells[0].length : 0
          };
     }
 
     static getDerivedStateFromProps(props,state){
-
-        //console.log("Grid > getDerivedStateFromProps > props",props);
-
-        if(!!props.cells) state.cells = props.cells;
-
-        if(props.nCols!==state.nCols || props.nRows!==state.nRows){
-
-            if(props.resizeEvent.side==='left' && props.resizeEvent.amount===-1){
-                state.cells.map(row=>{
-                    row.shift()
-                    row.map(col=>{
-                        col.coord.y--;
-                        return col;
-                    })
-                    return row;
-                })
-            }
-            if(props.resizeEvent.side==='top' && props.resizeEvent.amount===-1){
-                state.cells.shift();
-                state.cells.map(row=>{
-                    row.map(col=>{
-                        col.coord.x--;
-                        return col;
-                    })
-                    return row;
-                })
-            }
-            if(props.resizeEvent.side==='right' && props.resizeEvent.amount===-1){
-                state.cells.map(row=>{
-                    row.pop()
-                    return row;
-                })
-            }
-            if(props.resizeEvent.side==='bottom' && props.resizeEvent.amount===-1){
-                state.cells.pop()
-            }
-
-            let i=0;
-            if(props.resizeEvent.side==='left' && props.resizeEvent.amount===1){
-                state.cells.map(row=>{
-                    row.map(col=>{
-                        col.coord.y++;
-                        return col;
-                    })
-                    row.unshift({...emptyCell, ...{"coord":{x:i,y:0}}})
-                    i++;
-                    return row;
-                })
-            }
-            let j=0;
-            if(props.resizeEvent.side==='top' && props.resizeEvent.amount===1){
-                state.cells.map(row=>{
-                    row.map(col=>{
-                        col.coord.x++;
-                        return col;
-                    })
-                    return row;
-                })
-                state.cells.unshift(Array(props.nCols).fill().map((col)=>{
-                    col={...emptyCell, ...{"coord":{x:0,y:j}}}
-                    j++;
-                    return col;
-                }));
-            }
-            i=0;
-            if(props.resizeEvent.side==='right' && props.resizeEvent.amount===1){
-                state.cells.map(row=>{
-                    row.push({...emptyCell, ...{"coord":{x:i,y:props.nCols-1}}})
-                    i++;
-                    return row;
-                })
-            }
-            j=0;
-            if(props.resizeEvent.side==='bottom' && props.resizeEvent.amount===1){
-                state.cells.push(Array(props.nCols).fill().map((col)=>{
-                     col={...emptyCell, ...{"coord":{x:props.nRows-1,y:j}}}
-                     j++;
-                     return col;
-                 }))
-            }
-            state.nRows = props.nRows;
-            state.nCols = props.nCols;
+        console.log("Grid > getDerivedStateFromProps state",state);
+        console.log("Grid > getDerivedStateFromProps props",props);
+        if(!!props.cells){
+            state.cells = props.cells;
+            state.nRows = props.cells.length;
+            state.nCols = props.cells[0].length;
         }
+        //Sbianco le celle blue e gialle
+        state.cells.forEach(r=>{
+            r.forEach(c=>{
+                if(c.backgroundColor==='blue'||c.backgroundColor==='yellow') c.backgroundColor=''
+            })
+        })
+
+        //Le coloro nuovamente
         props && props.visitedCells && props.visitedCells.forEach(c => {
             state.cells[c[0]][c[1]].backgroundColor='blue';
         })
         props && props.shortestPath && props.shortestPath.forEach(c => {
             state.cells[c[0]][c[1]].backgroundColor='yellow';
         })
-
+        console.log("Grid > getDerivedStateFromProps NEW state",state);
         return state;
     }
 
@@ -165,7 +96,7 @@ class Grid extends Component{
             {   cells.map(row=>
                     <div class="clear">
                         {row.map(col=>
-                            <Cell x={col.coord.x} y={col.coord.y} cellType={col.cellType} onCellChange={this.updateCellState} backgroundColor={col.backgroundColor}/>
+                            <Cell key={col.guid} x={col.coord.x} y={col.coord.y} cellType={col.cellType} onCellChange={this.updateCellState} backgroundColor={col.backgroundColor}/>
                         )}
                         <br/>
                     </div>
@@ -175,21 +106,6 @@ class Grid extends Component{
         return grid;
     }
 
-}
-
-function buildMatrix(nRows,nCols){
-    let matrix = [];
-    let i=0, j=0;
-    matrix = Array(nRows).fill().map(()=>{
-        let row = Array(nCols).fill().map(()=>{
-          let e = {...emptyCell, ...{"coord":{x:i,y:j%nCols}}};
-          j++;
-          return e;
-        });
-        i++;
-        return row;
-    })
-    return matrix;
 }
 
 export default Grid;
