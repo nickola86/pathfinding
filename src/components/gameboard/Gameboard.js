@@ -42,8 +42,6 @@ class Gameboard extends Component {
            cells: buildMatrix(EMPTY_GRID.size.nRows,EMPTY_GRID.size.nCols)
         }
 
-        console.log("Gameboard Constructor State", _state);
-
         this.state = _state;
     }
 
@@ -52,7 +50,6 @@ class Gameboard extends Component {
     }
 
     onClickResizeHandler = (event) => {
-        console.log("CURRENT STATE",this.state);
         //Pulisco le celle visitate, le celle del cammino minimo, mantengo solo la griglia.
         let grid = {...this.state.grid};
         let cells = !!this.state.cells && this.state.cells.length > 0 ? [...this.state.cells] : [];
@@ -144,21 +141,28 @@ class Gameboard extends Component {
                  return col;
              }))
         }
-        console.log("NEW STATE!", {grid, cells})
         if(this.resizeEventIsValid(event,grid)){
             //Aggiorno lo stato se resize valido!
             this.setState(prevState => {
                 return {
-                    ...prevState, grid, cells
+                    ...prevState, grid, cells, shortestPathCoords:[],visitedCells:[]
                 }
-            });
+            },()=>{
+                 this.isGridReady();
+             });
         }
     }
 
     isGridReady = (isReady) => {
+
+        if(typeof isReady==='undefined'){
+            const list = [].concat(...this.state.cells);
+            isReady = !!list.find(c=>{return c.cellType==='entrypoint'}) && !!list.find(c=>{return c.cellType==='wayout'});
+        }
+
         this.setState(prevState => {
             return {
-                ...prevState, isGameboardReady : isReady
+                ...prevState, isGameboardReady : isReady, visitedCells:[],shortestPathCoords:[]
             }
         });
     }
@@ -199,10 +203,26 @@ class Gameboard extends Component {
           .then(res => res.json())
           .then(
             (result) => {
-                console.log("Grid Json Result:",result);
-                /*this.setState({
-                    cells: ???
-                  });*/
+                let grid=EMPTY_GRID;
+                grid.size.nRows=result.rows;
+                grid.size.nCols=result.cols;
+                let cells=buildMatrix(result.rows,result.cols)
+                const list = [].concat(...cells);
+                list.forEach(c=>{
+                    const cell = result.cells.find(e=>{return e.x===c.coord.x && e.y===c.coord.y});
+                    if(cell?.type==='wall') c.cellType='wall'
+                    if(cell?.type==='start') c.cellType='entrypoint'
+                    if(cell?.type==='finish') c.cellType='wayout'
+                    return c;
+                })
+                this.setState(prevState => {
+                    return {
+                        ...prevState, grid, cells, shortestPathCoords:[],visitedCells:[]
+                    }
+                    //
+                },()=>{
+                    this.isGridReady();
+                });
             }
           )
     }
@@ -251,6 +271,10 @@ class Gameboard extends Component {
             <div class="col"><Cell cellType="entrypoint" disabled={true} labels="on"/></div>
             <div class="col"><Cell cellType="wayout" disabled={true} labels="on"/></div>
           </div>
+          <hr/>
+          {this.state.visitedCells && this.state.visitedCells.length > 1 ? <h3>Celle esplorate: {this.state.visitedCells.length} su {this.state.grid.size.nRows*this.state.grid.size.nCols} totali ({(100*this.state.visitedCells.length / (this.state.grid.size.nRows*this.state.grid.size.nCols)).toFixed(2)}%)</h3> : ''}
+          {this.state.shortestPathCoords && this.state.shortestPathCoords.length > 1 ? <h3>Costo del cammino minimo: {this.state.shortestPathCoords.length}</h3> : ''}
+          {this.state.visitedCells && this.state.visitedCells.length > 1 && this.state.shortestPathCoords && this.state.shortestPathCoords.length === 1 ? <h3>Destinazione non raggiunta</h3> : ''}
         </div>
       );
     }

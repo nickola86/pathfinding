@@ -67,7 +67,7 @@ class Cell extends Component{
 
     render(){
         return <span>
-            <Button variant="light" className={`cell ${this.state.cellType} ${this.state.backgroundColor}`}
+            <Button variant="light" className={`cell ${this.state.cellType} ${this.state.backgroundColor || ''}`}
                     onClick={this.onClickHandler}>
                 <i className={icons[this.state.cellType]}/>
             </Button>

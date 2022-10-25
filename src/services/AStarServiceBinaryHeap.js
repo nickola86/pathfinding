@@ -51,6 +51,7 @@ var AStarService = {
 		        //Condizione di terminazione dell'interval per fine nodi da esplorare
 		        clearInterval(intervalId);
                 intervalId=null;
+                renderCallback([],[start.x,start.y],graph);
 		    }else{
 		        renderCallback([],[start.x,start.y],graph);
 		        // Grab the lowest f(x) to process next.  Heap keeps this sorted for us.
@@ -112,9 +113,6 @@ var AStarService = {
 
 		    }
 		},100);
-
-        // No result was found -- empty array signifies failure to find path
-        return [];
     },
     manhattan: function(pos0, pos1) {
     	// See list of heuristics: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html

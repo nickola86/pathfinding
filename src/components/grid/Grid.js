@@ -30,8 +30,6 @@ class Grid extends Component{
     }
 
     static getDerivedStateFromProps(props,state){
-        console.log("Grid > getDerivedStateFromProps state",state);
-        console.log("Grid > getDerivedStateFromProps props",props);
         if(!!props.cells){
             state.cells = props.cells;
             state.nRows = props.cells.length;
@@ -51,7 +49,6 @@ class Grid extends Component{
         props && props.shortestPath && props.shortestPath.forEach(c => {
             state.cells[c[0]][c[1]].backgroundColor='yellow';
         })
-        console.log("Grid > getDerivedStateFromProps NEW state",state);
         return state;
     }
 
