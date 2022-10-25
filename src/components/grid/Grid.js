@@ -14,9 +14,6 @@ let rules=[
         maxNumber:1
     }
 ]
-const emptyCell = {
-    cellType : "empty",
-};
 
 class Grid extends Component{
 
