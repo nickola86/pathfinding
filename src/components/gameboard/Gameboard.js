@@ -16,21 +16,25 @@ import React, { Component } from 'react';
 const MIN_ROWS = 4;
 const MIN_COLS = 4;
 
+const EMPTY_GRID = {
+   size : {
+       nRows:20,
+       nCols:30
+   },
+   cells:[],
+   resize : {
+       side : null,
+       amount : 0
+   }
+}
+
 class Gameboard extends Component {
 
     constructor(props,context){
         super(props,context);
         this.state = {
-            grid : {
-                size : {
-                    nRows:10,
-                    nCols:10
-                },
-                resize : {
-                    side : null,
-                    amount : 0
-                }
-            }
+            grid : EMPTY_GRID,
+            showPlusMinus : true
         }
     }
 
@@ -77,20 +81,16 @@ class Gameboard extends Component {
     }
 
     onClickStartHandler = () => {
-
         const grid = [...this.state.cells];
         const startCoords = this.getEntrypointCoords(grid);
         const endCoords = this.getWayoutCoords(grid);
         const graph = new Graph(grid.map(r=>{return [...r.map(c=>{return c.cellType==='wall' ? 1 : 0})]}));
         const  start = graph.nodes[startCoords[0]][startCoords[1]];
         const  end = graph.nodes[endCoords[0]][endCoords[1]];
-
         AStarService.search(graph,start,end,this.renderCallback);
-
     }
 
     renderCallback = (path,startCoords,graph) => {
-        console.log()
         let shortestPathCoords = [...path.map(p=>{return [p.x,p.y]}), startCoords];
         const list = [].concat(...graph.nodes);
         let visitedCells = list.filter(c=>{return c.visited}).map(c=>{return [c.x,c.y]});
@@ -110,22 +110,36 @@ class Gameboard extends Component {
         return [entrypoint.coord.x,entrypoint.coord.y];
     }
 
+
+    onClickLoadGridFromRemote = () => {
+        fetch("/api/grid.json")
+          .then(res => res.json())
+          .then(
+            (result) => {
+                console.log("Grid Json Result:",result);
+                /*this.setState({
+                    cells: ???
+                  });*/
+            }
+          )
+    }
+
     render(){
       return (<div class="gameboard container">
           <div class="row">
             <div class="col-sm-1 left">
-                <PlusMinus position="left" tooltip="Aggiungi(+) o rimuovi(-) una colonna da sinistra" onClickPlusMinus={this.onClickResizeHandler}/>
+                {this.state.showPlusMinus && <PlusMinus position="left" tooltip="Aggiungi(+) o rimuovi(-) una colonna da sinistra" onClickPlusMinus={this.onClickResizeHandler}/>}
             </div>
             <div class="col-sm center">
-                <PlusMinus position="top" tooltip="Aggiungi(+) o rimuovi(-) una riga dall' alto" onClickPlusMinus={this.onClickResizeHandler}/>
+                {this.state.showPlusMinus && <PlusMinus position="top" tooltip="Aggiungi(+) o rimuovi(-) una riga dall' alto" onClickPlusMinus={this.onClickResizeHandler}/>}
                 {
                     !this.state.gridHidden && <Grid nRows={this.state.grid.size.nRows} nCols={this.state.grid.size.nCols} resizeEvent={this.state.grid.resize} isGridReady={this.isGridReady}
                             cells={this.state.cells} shortestPath={this.state.shortestPathCoords} visitedCells={this.state.visitedCells}/>
                 }
-                <PlusMinus position="bottom" tooltip="Aggiungi(+) o rimuovi(-) una riga dal basso" onClickPlusMinus={this.onClickResizeHandler}/>
+                {this.state.showPlusMinus && <PlusMinus position="bottom" tooltip="Aggiungi(+) o rimuovi(-) una riga dal basso" onClickPlusMinus={this.onClickResizeHandler}/>}
             </div>
             <div class="col-sm-1 right">
-                <PlusMinus position="right" tooltip="Aggiungi(+) o rimuovi(-) una colonna da destra" onClickPlusMinus={this.onClickResizeHandler}/>
+                {this.state.showPlusMinus && <PlusMinus position="right" tooltip="Aggiungi(+) o rimuovi(-) una colonna da destra" onClickPlusMinus={this.onClickResizeHandler}/>}
             </div>
           </div>
           <hr/>
@@ -136,6 +150,11 @@ class Gameboard extends Component {
                     <em>Per abilitare questo bottone devi selezionare una cella di entrata e una di uscita dal labirinto</em>
                 </p>
             </div>
+          </div>
+          <div class="row">
+              <div class="col">
+                <Button onClick={this.onClickLoadGridFromRemote}>Carica griglia da backend</Button>
+              </div>
           </div>
           <div class="row">
             <em>Legenda:</em>

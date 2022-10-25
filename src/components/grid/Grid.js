@@ -163,12 +163,12 @@ class Grid extends Component{
         const cells = [...this.state.cells]
         let grid = <div className="grid">
             {   cells.map(row=>
-                    <span>
+                    <div class="clear">
                         {row.map(col=>
                             <Cell x={col.coord.x} y={col.coord.y} cellType={col.cellType} onCellChange={this.updateCellState} backgroundColor={col.backgroundColor}/>
                         )}
                         <br/>
-                    </span>
+                    </div>
                 )
             }
         </div>

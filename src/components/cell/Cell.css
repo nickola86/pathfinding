@@ -1,11 +1,25 @@
+.clear:after{
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+.clear{
+    display:block;
+    height:15px;
+    vertical-align:top;
+    line-height:0px;
+}
 .cell{
   display:inline-block;
   position:relative;
   background-color: white;
   border:1px solid gray;
   border-radius:0;
-  height:30px;
-  width:30px;
+  height:15px;
+  width:15px;
+  padding:0px;
 }
 .cell:hover{
     border:1px solid gray;
@@ -22,14 +36,15 @@
 
 .cell i{
     position:absolute;
-    font-size:28px;
+    font-size:15px;
     top:0;
 }
 .cell.entrypoint i{
-    left:2px;
+    left:1px;
+    font-size:14px;
 }
 .cell.wayout i{
-    left:5px;
+    left:2px;
 }
 label.hidden{
     display:none;
