@@ -89,18 +89,17 @@ class Grid extends Component{
 
     render(){
         const cells = [...this.state.cells]
-        let grid = <div className="grid">
-            {   cells.map(row=>
-                    <div class="clear">
-                        {row.map(col=>
-                            <Cell key={col.guid} x={col.coord.x} y={col.coord.y} cellType={col.cellType} onCellChange={this.updateCellState} backgroundColor={col.backgroundColor}/>
-                        )}
-                        <br/>
-                    </div>
-                )
-            }
-        </div>
-        return grid;
+        return <div className="grid">
+               {   cells.map(row=>
+                       <div className="clear">
+                           {row.map(col=>
+                               <Cell key={col.guid} x={col.coord.x} y={col.coord.y} cellType={col.cellType} onCellChange={this.updateCellState} backgroundColor={col.backgroundColor}/>
+                           )}
+                           <br/>
+                       </div>
+                   )
+               }
+           </div>;
     }
 
 }

@@ -12,9 +12,7 @@ function App() {
           <img src={logo} className="App-logo" alt="logo" />
           <h1>pathfinding visualizer</h1>
       </header>
-      <content>
-        <Gameboard/>
-      </content>
+      <Gameboard/>
     </div>
   );
 }

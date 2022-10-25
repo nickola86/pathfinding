@@ -228,12 +228,12 @@ class Gameboard extends Component {
     }
 
     render(){
-      return (<div class="gameboard container">
-          <div class="row">
-            <div class="col-sm-1 left">
+      return (<div className="gameboard container">
+          <div className="row">
+            <div className="col-sm-1 left">
                 {this.state.showPlusMinus && <PlusMinus position="left" tooltip="Aggiungi(+) o rimuovi(-) una colonna da sinistra" onClickPlusMinus={this.onClickResizeHandler}/>}
             </div>
-            <div class="col-sm center">
+            <div className="col-sm center">
                 {this.state.showPlusMinus && <PlusMinus position="top" tooltip="Aggiungi(+) o rimuovi(-) una riga dall' alto" onClickPlusMinus={this.onClickResizeHandler}/>}
                 {
                     <Grid   nRows={this.state.grid.size.nRows}
@@ -246,30 +246,30 @@ class Gameboard extends Component {
                 }
                 {this.state.showPlusMinus && <PlusMinus position="bottom" tooltip="Aggiungi(+) o rimuovi(-) una riga dal basso" onClickPlusMinus={this.onClickResizeHandler}/>}
             </div>
-            <div class="col-sm-1 right">
+            <div className="col-sm-1 right">
                 {this.state.showPlusMinus && <PlusMinus position="right" tooltip="Aggiungi(+) o rimuovi(-) una colonna da destra" onClickPlusMinus={this.onClickResizeHandler}/>}
             </div>
           </div>
           <hr/>
-          <div class="row">
-            <div class="col">
+          <div className="row">
+            <div className="col">
                 <Button disabled={!this.state.isGameboardReady} onClick={this.onClickStartHandler}>Trova il cammino minimo!</Button>
                 <p>
                     <em>Per abilitare questo bottone devi selezionare una cella di entrata e una di uscita dal labirinto</em>
                 </p>
             </div>
           </div>
-          <div class="row">
-              <div class="col">
+          <div className="row">
+              <div className="col">
                 <Button onClick={this.onClickLoadGridFromRemote}>Carica griglia da backend</Button>
               </div>
           </div>
-          <div class="row">
+          <div className="row">
             <em>Legenda:</em>
-            <div class="col"><Cell cellType="empty" disabled={true} labels="on"/></div>
-            <div class="col"><Cell cellType="wall" disabled={true} labels="on"/></div>
-            <div class="col"><Cell cellType="entrypoint" disabled={true} labels="on"/></div>
-            <div class="col"><Cell cellType="wayout" disabled={true} labels="on"/></div>
+            <div className="col"><Cell cellType="empty" disabled={true} labels="on"/></div>
+            <div className="col"><Cell cellType="wall" disabled={true} labels="on"/></div>
+            <div className="col"><Cell cellType="entrypoint" disabled={true} labels="on"/></div>
+            <div className="col"><Cell cellType="wayout" disabled={true} labels="on"/></div>
           </div>
           <hr/>
           {this.state.visitedCells && this.state.visitedCells.length > 1 ? <h3>Celle esplorate: {this.state.visitedCells.length} su {this.state.grid.size.nRows*this.state.grid.size.nCols} totali ({(100*this.state.visitedCells.length / (this.state.grid.size.nRows*this.state.grid.size.nCols)).toFixed(2)}%)</h3> : ''}
