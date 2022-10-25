@@ -1,7 +1,7 @@
 import './Grid.css'
 import Cell from '../cell/Cell';
 import React, { Component } from 'react';
-import transitions from '../TransitionsManager'
+import transitions from '../../services/TransitionsManager'
 
 //Rules
 let rules=[

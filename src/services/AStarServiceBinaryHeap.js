@@ -1,4 +1,4 @@
-import BinaryHeap from './BinaryHeap'
+import BinaryHeap from '../libs/BinaryHeap'
 
 /* 	astar.js http://github.com/bgrins/javascript-astar
 	Implements the astar search algorithm in javascript using a binary heap

@@ -1,11 +1,11 @@
 import './Gameboard.css';
 import Grid from '../grid/Grid';
 import Cell from '../cell/Cell';
-import Graph from '../Graph'
+import Graph from '../../libs/Graph'
 
 //import AStarService from '../AStarService';
 
-import AStarService from '../AStarServiceBinaryHeap';
+import AStarService from '../../services/AStarServiceBinaryHeap';
 
 
 import PlusMinus from '../plus-minus/PlusMinus';
