@@ -88,9 +88,9 @@ class Grid extends Component{
         const cells = [...this.state.cells]
         return <div className="grid">
                {   cells.map(row=>
-                       <div className="clear" key={'row'+row[0].coord.x}>
+                       <div className="clear">
                            {row.map(col=>
-                               <Cell key={'cell'+[col.coord.x,col.coord.y].join(',')} x={col.coord.x} y={col.coord.y} cellType={col.cellType} onCellChange={this.updateCellState} backgroundColor={col.backgroundColor}/>
+                               <Cell key={col.guid} x={col.coord.x} y={col.coord.y} cellType={col.cellType} onCellChange={this.updateCellState} backgroundColor={col.backgroundColor}/>
                            )}
                            <br/>
                        </div>
