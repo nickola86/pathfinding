@@ -18,8 +18,8 @@ const MIN_COLS = 4;
 
 const EMPTY_GRID = {
    size : {
-       nRows:20,
-       nCols:30
+       nRows:15,
+       nCols:15
    },
    resize : {
        side : null,
