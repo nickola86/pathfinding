@@ -1,7 +1,13 @@
-.left{
-display:inline-block;
+.buttons.left{
+    display:inline-block;
+}
+.buttons.left .btn-group{
+    transform: rotate(90deg);
 }
 
-.right{
-display:inline-block;
+.buttons.right{
+    display:inline-block;
+}
+.buttons.right .btn-group{
+    transform: rotate(90deg);
 }

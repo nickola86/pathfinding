@@ -86,11 +86,11 @@ class Grid extends Component{
 
     render(){
         const cells = [...this.state.cells]
-        return <div className="grid">
+        return <div key={CreateGuid()} className="grid">
                {   cells.map(row=>
-                       <div className="clear">
+                       <div key={CreateGuid()} className="clear">
                            {row.map(col=>
-                               <Cell key={col.guid} x={col.coord.x} y={col.coord.y} cellType={col.cellType} onCellChange={this.updateCellState} backgroundColor={col.backgroundColor}/>
+                               <Cell key={CreateGuid()} x={col.coord.x} y={col.coord.y} cellType={col.cellType} onCellChange={this.updateCellState} backgroundColor={col.backgroundColor}/>
                            )}
                            <br/>
                        </div>
@@ -100,5 +100,11 @@ class Grid extends Component{
     }
 
 }
-
+function CreateGuid() {
+   function _p8(s) {
+      var p = (Math.random().toString(16)+"000000000").substr(2,8);
+      return s ? "-" + p.substr(0,4) + "-" + p.substr(4,4) : p ;
+   }
+   return _p8() + _p8(true) + _p8(true) + _p8();
+}
 export default Grid;
