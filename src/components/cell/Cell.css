@@ -27,12 +27,6 @@
 .cell.wall{
     background-color: #333;
 }
-.cell.entrypoint{
-
-}
-.cell.wayout{
-
-}
 
 .cell i{
     position:absolute;
@@ -44,7 +38,8 @@
     font-size:14px;
 }
 .cell.wayout i{
-    left:2px;
+    left:0px;
+    font-size:13px;
 }
 label.hidden{
     display:none;
@@ -56,6 +51,13 @@ label.visible{
 .cell.empty.blue{
     background-color:#C0E0FF;
 }
-.cell.empty.yellow,.cell.entrypoint.yellow,.cell.wayout.yellow{
+.cell.empty.dark-blue{
+    background-color:#0A58CA;
+}
+.cell.empty.yellow,
+.cell.entrypoint,
+.cell.entrypoint.yellow,
+.cell.wayout,
+.cell.wayout.yellow{
     background-color:#FFFF80;
 }

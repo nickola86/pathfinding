@@ -145,7 +145,7 @@ class Gameboard extends Component {
             //Aggiorno lo stato se resize valido!
             this.setState(prevState => {
                 return {
-                    ...prevState, grid, cells, shortestPathCoords:[],visitedCells:[]
+                    ...prevState, grid, cells, shortestPathCoords:[],visitedCells:[],lastIterationCells:[]
                 }
             },()=>{
                  this.isGridReady();
@@ -162,7 +162,7 @@ class Gameboard extends Component {
 
         this.setState(prevState => {
             return {
-                ...prevState, isGameboardReady : isReady, visitedCells:[],shortestPathCoords:[]
+                ...prevState, isGameboardReady : isReady, visitedCells:[],shortestPathCoords:[],lastIterationCells:[]
             }
         });
     }
@@ -175,20 +175,21 @@ class Gameboard extends Component {
         const  start = graph.nodes[startCoords[0]][startCoords[1]];
         const  end = graph.nodes[endCoords[0]][endCoords[1]];
         const searchPromise = AStarService.search(graph,start,end,this.renderCallback);
-        searchPromise.then(()=>{
-            console.log("Destinazione raggiunta!")
-        },()=>{
-            console.log("Destinazione irraggiungibile!")
+        searchPromise.then((path)=>{
+            console.log("Destinazione irraggiungibile! path.length: ", path.length);
+        },(err)=>{
+            console.err("Destinazione irraggiungibile!",err)
         });
         return searchPromise;
     }
 
     renderCallback = (path,startCoords,graph) => {
-        let shortestPathCoords = [...path.map(p=>{return [p.x,p.y]}), startCoords];
+        let shortestPathCoords = [...path.map(p=>{return [p.x,p.y]})];
         const list = [].concat(...graph.nodes);
         let visitedCells = list.filter(c=>{return c.visited}).map(c=>{return [c.x,c.y]});
+        let lastIterationCells = visitedCells.filter(c=>{return this.state.visitedCells.map(v=>v.toString()).indexOf(c.toString())<0});
         this.setState(prevState => {
-            return {...prevState,shortestPathCoords,visitedCells}
+            return {...prevState,shortestPathCoords,visitedCells,lastIterationCells}
         });
     }
 
@@ -223,7 +224,7 @@ class Gameboard extends Component {
                 })
                 this.setState(prevState => {
                     return {
-                        ...prevState, grid, cells, shortestPathCoords:[],visitedCells:[]
+                        ...prevState, grid, cells, shortestPathCoords:[],visitedCells:[],lastIterationCells:[]
                     }
                     //
                 },()=>{
@@ -255,7 +256,9 @@ class Gameboard extends Component {
                             isGridReady={this.isGridReady}
                             cells={this.state.cells}
                             shortestPath={this.state.shortestPathCoords}
-                            visitedCells={this.state.visitedCells}/>
+                            visitedCells={this.state.visitedCells}
+                            lastIterationCells={this.state.lastIterationCells}
+                            />
                 }
                 {this.state.showPlusMinus && <PlusMinus position="bottom" tooltip="Aggiungi(+) o rimuovi(-) una riga dal basso" onClickPlusMinus={this.onClickResizeHandler}/>}
             </div>
@@ -274,8 +277,8 @@ class Gameboard extends Component {
           </div>
           <hr/>
           {this.state.visitedCells && this.state.visitedCells.length > 1 ? <h3>Celle esplorate: {this.state.visitedCells.length} su {this.state.grid.size.nRows*this.state.grid.size.nCols} totali ({(100*this.state.visitedCells.length / (this.state.grid.size.nRows*this.state.grid.size.nCols)).toFixed(2)}%)</h3> : ''}
-          {this.state.shortestPathCoords && this.state.shortestPathCoords.length > 1 ? <h3 role="status">Costo del cammino minimo: {this.state.shortestPathCoords.length}</h3> : ''}
-          {this.state.visitedCells && this.state.visitedCells.length > 1 && this.state.shortestPathCoords && this.state.shortestPathCoords.length === 1 ? <h3 role="status">Destinazione non raggiunta</h3> : ''}
+          {this.state.shortestPathCoords && this.state.shortestPathCoords.length > 0 ? <h3 role="status">Costo del cammino minimo: {this.state.shortestPathCoords.length}</h3> : ''}
+          {this.state.visitedCells && this.state.visitedCells.length > 1 && this.state.shortestPathCoords && this.state.shortestPathCoords.length === 0 ? <h3 role="status">Destinazione non raggiunta</h3> : ''}
         </div>
       );
     }
