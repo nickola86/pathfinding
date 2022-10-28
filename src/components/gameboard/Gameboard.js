@@ -18,8 +18,8 @@ const MIN_COLS = 4;
 
 const EMPTY_GRID = {
    size : {
-       nRows:15,
-       nCols:15
+       nRows:19,
+       nCols:43
    },
    resize : {
        side : null,
@@ -167,14 +167,20 @@ class Gameboard extends Component {
         });
     }
 
-    onClickStartHandler = () => {
+    onClickStartHandler = async () => {
         const cells = [...this.state.cells];
         const startCoords = this.getEntrypointCoords(cells);
         const endCoords = this.getWayoutCoords(cells);
         const graph = new Graph(cells.map(r=>{return [...r.map(c=>{return c.cellType==='wall' ? 1 : 0})]}));
         const  start = graph.nodes[startCoords[0]][startCoords[1]];
         const  end = graph.nodes[endCoords[0]][endCoords[1]];
-        AStarService.search(graph,start,end,this.renderCallback);
+        const searchPromise = AStarService.search(graph,start,end,this.renderCallback);
+        searchPromise.then(()=>{
+            console.log("Destinazione raggiunta!")
+        },()=>{
+            console.log("Destinazione irraggiungibile!")
+        });
+        return searchPromise;
     }
 
     renderCallback = (path,startCoords,graph) => {
@@ -230,6 +236,13 @@ class Gameboard extends Component {
     render(){
       return (<div className="gameboard container">
           <div className="row">
+                      <div className="col"><Cell cellType="empty" disabled={true} labels="on"/></div>
+                      <div className="col"><Cell cellType="wall" disabled={true} labels="on"/></div>
+                      <div className="col"><Cell cellType="entrypoint" disabled={true} labels="on"/></div>
+                      <div className="col"><Cell cellType="wayout" disabled={true} labels="on"/></div>
+          </div>
+          <hr/>
+          <div className="row">
             <div className="col-sm-1 left">
                 {this.state.showPlusMinus && <PlusMinus position="left" tooltip="Aggiungi(+) o rimuovi(-) una colonna da sinistra" onClickPlusMinus={this.onClickResizeHandler}/>}
             </div>
@@ -253,28 +266,16 @@ class Gameboard extends Component {
           <hr/>
           <div className="row">
             <div className="col">
-                <Button disabled={!this.state.isGameboardReady} onClick={this.onClickStartHandler}>Trova il cammino minimo!</Button>
-                <p>
-                    <em>Per abilitare questo bottone devi selezionare una cella di entrata e una di uscita dal labirinto</em>
-                </p>
+                <Button role="button-load-backend" onClick={this.onClickLoadGridFromRemote}>Carica griglia da backend</Button>
             </div>
-          </div>
-          <div className="row">
-              <div className="col">
-                <Button onClick={this.onClickLoadGridFromRemote}>Carica griglia da backend</Button>
-              </div>
-          </div>
-          <div className="row">
-            <em>Legenda:</em>
-            <div className="col"><Cell cellType="empty" disabled={true} labels="on"/></div>
-            <div className="col"><Cell cellType="wall" disabled={true} labels="on"/></div>
-            <div className="col"><Cell cellType="entrypoint" disabled={true} labels="on"/></div>
-            <div className="col"><Cell cellType="wayout" disabled={true} labels="on"/></div>
+            <div className="col">
+                <Button title="Per abilitare questo bottone devi selezionare una cella di entrata e una di uscita dal labirinto" role="button-solve" disabled={!this.state.isGameboardReady} onClick={this.onClickStartHandler}>Trova il cammino minimo!</Button>
+            </div>
           </div>
           <hr/>
           {this.state.visitedCells && this.state.visitedCells.length > 1 ? <h3>Celle esplorate: {this.state.visitedCells.length} su {this.state.grid.size.nRows*this.state.grid.size.nCols} totali ({(100*this.state.visitedCells.length / (this.state.grid.size.nRows*this.state.grid.size.nCols)).toFixed(2)}%)</h3> : ''}
-          {this.state.shortestPathCoords && this.state.shortestPathCoords.length > 1 ? <h3>Costo del cammino minimo: {this.state.shortestPathCoords.length}</h3> : ''}
-          {this.state.visitedCells && this.state.visitedCells.length > 1 && this.state.shortestPathCoords && this.state.shortestPathCoords.length === 1 ? <h3>Destinazione non raggiunta</h3> : ''}
+          {this.state.shortestPathCoords && this.state.shortestPathCoords.length > 1 ? <h3 role="status">Costo del cammino minimo: {this.state.shortestPathCoords.length}</h3> : ''}
+          {this.state.visitedCells && this.state.visitedCells.length > 1 && this.state.shortestPathCoords && this.state.shortestPathCoords.length === 1 ? <h3 role="status">Destinazione non raggiunta</h3> : ''}
         </div>
       );
     }

@@ -34,7 +34,13 @@ var AStarService = {
             }
         }
     },
-    search: function(graph, start, end, renderCallback, heuristic) {
+    search: async function(graph, start, end, renderCallback, heuristic) {
+        let searchPromise = new Promise(function(success, fail) {
+          return AStarService._search(graph, start, end, renderCallback, heuristic,success,fail)
+        });
+        return searchPromise;
+    },
+    _search: function(graph,start,end,renderCallback,heuristic,success,fail){
         let grid = graph.nodes;
         AStarService.init(grid);
         heuristic = heuristic || AStarService.manhattan;
@@ -42,19 +48,20 @@ var AStarService = {
         var openList   = [];
         openList.push(start);
 
-		var openHeap = new BinaryHeap(function(node){return node.f;});
-		openHeap.push(start);
+        var openHeap = new BinaryHeap(function(node){return node.f;});
+        openHeap.push(start);
 
-		//a intervalli regolari, faccio pop dall'heap, se l'heap è vuoto termino
-		var intervalId = setInterval(()=>{
-		    if(openHeap.size() === 0){
-		        //Condizione di terminazione dell'interval per fine nodi da esplorare
-		        clearInterval(intervalId);
+        //a intervalli regolari, faccio pop dall'heap, se l'heap è vuoto termino
+        var intervalId = setInterval(()=>{
+            if(openHeap.size() === 0){
+                //Condizione di terminazione dell'interval per fine nodi da esplorare
+                clearInterval(intervalId);
                 intervalId=null;
                 renderCallback([],[start.x,start.y],graph);
-		    }else{
-		        renderCallback([],[start.x,start.y],graph);
-		        // Grab the lowest f(x) to process next.  Heap keeps this sorted for us.
+                fail();
+            }else{
+                renderCallback([],[start.x,start.y],graph);
+                // Grab the lowest f(x) to process next.  Heap keeps this sorted for us.
                 var currentNode = openHeap.pop();
 
                 // End case -- result has been found, return the traced path
@@ -68,8 +75,9 @@ var AStarService = {
                     //Condizione di terminazione dell'interval per raggiunto obiettivo
                     clearInterval(intervalId);
                     intervalId=null;
-                    renderCallback(ret.reverse(),[start.x,start.y],graph);
-                    return;
+                    const shortestPath = ret.reverse();
+                    renderCallback(shortestPath,[start.x,start.y],graph);
+                    success(shortestPath);
                 }
 
                 // Normal case -- move currentNode from open to closed, process each of its neighbors
@@ -110,9 +118,8 @@ var AStarService = {
                         }
                     }
                 }
-
-		    }
-		},100);
+            }
+        },100);
     },
     manhattan: function(pos0, pos1) {
     	// See list of heuristics: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
