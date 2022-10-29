@@ -32,16 +32,19 @@ class Grid extends Component{
             state.nRows = props.cells.length;
             state.nCols = props.cells[0].length;
         }
-        //Sbianco le celle blue e gialle
+        //Sbianco le celle blue, dark-blue e gialle
         state.cells.forEach(r=>{
             r.forEach(c=>{
-                if(c.backgroundColor==='blue'||c.backgroundColor==='yellow') c.backgroundColor=''
+                if(['blue','dark-blue','yellow'].indexOf(c.backgroundColor)>=0) c.backgroundColor=''
             })
         })
 
         //Le coloro nuovamente
         props && props.visitedCells && props.visitedCells.forEach(c => {
             state.cells[c[0]][c[1]].backgroundColor='blue';
+        })
+        props && props.lastIterationCells && props.lastIterationCells.forEach(c => {
+            state.cells[c[0]][c[1]].backgroundColor='dark-blue';
         })
         props && props.shortestPath && props.shortestPath.forEach(c => {
             state.cells[c[0]][c[1]].backgroundColor='yellow';

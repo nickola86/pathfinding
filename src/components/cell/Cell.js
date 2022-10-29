@@ -16,7 +16,7 @@ const labels = {
 }
 const icons = {
     "entrypoint":"fa fa-chevron-right",
-    "wayout":"fa fa-xmark"
+    "wayout":"fa-regular fa-circle-dot"
 }
 
 class Cell extends Component{
